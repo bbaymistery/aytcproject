@@ -4,7 +4,7 @@ export const productsData = [
     name: "Brain Memory",
     catKey: "cat6",
     price: "29",
-    image: "https://images.unsplash.com/photo-1616671276441-2f2c277b8bf6?w=500&q=80"
+    image: "https://images.unsplash.com/photo-1734607404551-b7fe738caf96?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     id: 2,
@@ -53,6 +53,6 @@ export const productsData = [
     name: "Zinc + D3",
     catKey: "cat3",
     price: "22",
-    image: "https://images.unsplash.com/photo-1631815585533-20f5d27ab9c4?w=500&q=80"
+    image: "https://images.unsplash.com/photo-1648139347040-857f024f8da4?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   }
 ];
