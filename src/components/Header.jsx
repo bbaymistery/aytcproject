@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Search, ShoppingBag, Heart, Menu, User, ChevronDown } from 'lucide-react';
+import { Search, ShoppingBag, Heart, Menu, User, ChevronDown, X, ChevronRight } from 'lucide-react';
 import { setLang } from '../features/langSlice';
 import { dict } from '../translations';
 import Logo from './Logo';
+import AuthDrawer from './AuthDrawer';
 
 const Header = () => {
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAllCategoriesOpen, setIsAllCategoriesOpen] = useState(false);
+  const [activeSidebarCategory, setActiveSidebarCategory] = useState(null);
+
   const dispatch = useDispatch();
   const lang = useSelector(state => state.lang.current);
   const t = dict[lang];
@@ -19,9 +26,22 @@ const Header = () => {
   const favCount = favItems.length;
 
   const categories = [t.cat1, t.cat2, t.cat3, t.cat4, t.cat5, t.cat6];
-
+  const subcategoriesArray = [
+    ["C Vitamini", "D3 Vitamini", "B Kompleks", "Multivitaminlər", "Sink", "Dəmir"],
+    ["Uşaqlar üçün", "Böyüklər üçün", "Həzm üçün", "Gündəlik Kompleks"],
+    ["L-Karnitin", "Kofein Ekstraktı", "Yaşıl Çay Ekstraktı", "Kompleks Gücləndirici"],
+    ["Qadınlar üçün", "Kişilər üçün", "Tiroid Dəstəyi", "Melatonin"],
+    ["Maqnezium", "Kalsium", "Kalium", "Selen", "Mis"],
+    ["Omeqa-3", "Ginkqo Biloba", "Fosfatidilserin", "L-Teanin"]
+  ];
   const handleLangChange = (e) => {
     dispatch(setLang(e.target.value));
+  };
+
+  const openAuth = (mode) => {
+    setAuthMode(mode);
+    setIsAuthOpen(true);
+    setIsDropdownOpen(false);
   };
 
   return (
@@ -83,27 +103,94 @@ const Header = () => {
             </select>
           </div>
           
-          <button className="login-btn">
-            <User size={20} />
-            {t.login}
-          </button>
+          <div className="login-dropdown-container">
+            <button className="login-btn" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+              <User size={20} />
+              {t.login}
+            </button>
+            {isDropdownOpen && (
+              <div className="login-dropdown">
+                <button onClick={() => openAuth('login')} className="login-dropdown-btn primary">
+                  Daxil olun
+                </button>
+                <button onClick={() => openAuth('register')} className="login-dropdown-btn secondary">
+                  Qeydiyyatdan keç
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       <div className="category-nav-wrapper">
         <div className="category-nav">
-          <button className="all-categories-btn">
-            <Menu size={18} /> {t.allCategories}
-          </button>
+          <div className="all-categories-container">
+            <button 
+              className={`all-categories-btn ${isAllCategoriesOpen ? 'active' : ''}`}
+              onClick={() => setIsAllCategoriesOpen(!isAllCategoriesOpen)}
+            >
+              {isAllCategoriesOpen ? <X size={18} /> : <Menu size={18} />} {t.allCategories}
+            </button>
+            
+            {isAllCategoriesOpen && (
+              <div className="sidebar-menu">
+                <div className="sidebar-categories-list">
+                  {categories.map((cat, i) => (
+                    <div 
+                      key={i} 
+                      className={`sidebar-cat-item ${activeSidebarCategory === i ? 'active' : ''}`}
+                      onMouseEnter={() => setActiveSidebarCategory(i)}
+                    >
+                      {cat} <ChevronRight size={14} color={activeSidebarCategory === i ? '#1D71B8' : '#94A3B8'} />
+                    </div>
+                  ))}
+                </div>
+                
+                {activeSidebarCategory !== null && (
+                  <>
+                    <div className="sidebar-subcategories">
+                      <h3 className="sub-title">{categories[activeSidebarCategory]}</h3>
+                      <ul className="sub-list">
+                        {(subcategoriesArray[activeSidebarCategory] || []).map((sub, i) => (
+                          <li key={i} className="sub-item" onClick={() => setIsAllCategoriesOpen(false)}>
+                            <Link to="/products" style={{ color: 'inherit', textDecoration: 'none', display: 'block', width: '100%' }}>{sub}</Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="sidebar-image-banner">
+                      <img 
+                        src="https://images.pexels.com/photos/3850624/pexels-photo-3850624.jpeg?auto=compress&cs=tinysrgb&w=600" 
+                        alt="Promo" 
+                        className="banner-image" 
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
           <ul className="category-list">
             {categories.map((cat, index) => (
-              <li key={index} className="category-item">
+              <li key={index} className="category-item has-dropdown">
                 {cat} <ChevronDown size={14} color="#94A3B8" />
+                <div className="dropdown-menu">
+                  <ul className="sub-list">
+                    {(subcategoriesArray[index] || []).map((sub, i) => (
+                      <li key={i} className="sub-item">
+                        <Link to="/products" style={{ color: 'inherit', textDecoration: 'none', display: 'block', width: '100%' }}>{sub}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </li>
             ))}
           </ul>
         </div>
       </div>
+
+      <AuthDrawer isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} initialMode={authMode} />
     </header>
   );
 };
