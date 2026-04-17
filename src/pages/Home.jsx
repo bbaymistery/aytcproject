@@ -15,27 +15,31 @@ const HERO_SLIDES = [
   {
     titleAz: 'Sağlamlıq üçün',
     titleRu: 'Для здоровья',
-    highlightAz: 'Qlobal Həllər',
-    highlightRu: 'Глобальные решения',
-    descAz: 'Dünya brendlərindən premium vitaminlər',
-    descRu: 'Премиум витамины от мировых брендов',
+    highlightAz: 'Qlobal',
+    highlightRu: 'Глобальные',
+    afterHighlightAz: ' Həllər',
+    afterHighlightRu: ' решения',
+    descAz: '',
+    descRu: '',
     btnAz: 'Alış-verişə Başla',
     btnRu: 'Начать покупки',
-    img1: 'https://images.unsplash.com/photo-1616671276441-2f2c277b8bf6?w=280&q=80',
-    img2: 'https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?w=280&q=80',
-    bg: '#f5f5f0',
+    img1: 'https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?w=280&q=80',
+    img2: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=280&q=80',
+    bg: "linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), url('https://images.unsplash.com/photo-1517231426118-2e06180182ce?w=1600&q=80') center/cover no-repeat",
   },
   {
     titleAz: 'Xüsusi',
     titleRu: 'Специальные',
     highlightAz: 'Endirimlər',
     highlightRu: 'Скидки',
+    afterHighlightAz: ' sizin üçün',
+    afterHighlightRu: ' для вас',
     descAz: 'Seçilmiş məhsullarda 20% endirim',
     descRu: 'Скидка 20% на избранные товары',
     btnAz: 'İndi Bax',
     btnRu: 'Смотреть',
-    img1: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=280&q=80',
-    img2: 'https://images.unsplash.com/photo-1631815585533-20f5d27ab9c4?w=280&q=80',
+    img1: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=280&q=80',
+    img2: 'https://images.unsplash.com/photo-1550572017-edd951b55104?w=280&q=80',
     bg: '#eef4ff',
   },
 ];
@@ -50,7 +54,7 @@ const BLOG_POSTS = [
     date: '10.6.2024',
     readAz: '6-10 dəq oxuma',
     readRu: '6-10 мин чтения',
-    image: 'https://images.unsplash.com/photo-1616671276441-2f2c277b8bf6?w=400&q=80',
+    image: 'https://images.unsplash.com/photo-1574169208507-84376144848b?w=400&q=80',
   },
   {
     id: 2,
@@ -73,7 +77,7 @@ const BLOG_POSTS = [
     date: '1.6.2024',
     readAz: '6-10 dəq oxuma',
     readRu: '6-10 мин чтения',
-    image: 'https://images.unsplash.com/photo-1631815585533-20f5d27ab9c4?w=400&q=80',
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80',
   },
 ];
 
@@ -106,10 +110,17 @@ export default function Home() {
   const [heroIdx, setHeroIdx] = useState(0);
   const [prodIdx, setProdIdx] = useState(0);
   const [activeCat, setActiveCat] = useState('all');
+  const [testiIdx, setTestiIdx] = useState(0);
 
   /* auto hero */
   useEffect(() => {
     const id = setInterval(() => setHeroIdx(p => (p + 1) % HERO_SLIDES.length), 5000);
+    return () => clearInterval(id);
+  }, []);
+
+  /* auto testimonials */
+  useEffect(() => {
+    const id = setInterval(() => setTestiIdx(p => (p + 1) % TESTIMONIALS.length), 4000);
     return () => clearInterval(id);
   }, []);
 
@@ -180,8 +191,13 @@ export default function Home() {
               {lang === 'az' ? hero.titleAz : hero.titleRu}{' '}
               <br />
               <span className="home-hero-highlight">{lang === 'az' ? hero.highlightAz : hero.highlightRu}</span>
+              <span className="home-hero-text-bottom-line">
+                {lang === 'az' ? hero.afterHighlightAz : hero.afterHighlightRu}
+              </span>
             </h1>
-            <p>{lang === 'az' ? hero.descAz : hero.descRu}</p>
+            {(lang === 'az' ? hero.descAz : hero.descRu) && (
+              <p>{lang === 'az' ? hero.descAz : hero.descRu}</p>
+            )}
             <Link to="/products" className="home-hero-btn">
               {lang === 'az' ? hero.btnAz : hero.btnRu}
               <ArrowRight size={15} />
@@ -199,18 +215,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══ 2. CATEGORY PILLS ══ */}
-      <div className="home-cat-pills">
-        {catTabs.map(tab => (
-          <button
-            key={tab.key + tab.label}
-            className={`home-cat-pill ${activeCat === tab.key ? 'on' : ''}`}
-            onClick={() => { setActiveCat(tab.key); setProdIdx(0); }}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      {/* PILLS REMOVED */}
 
       {/* ══ 3. KATEQORIYALAR (circles) ══ */}
       <section className="home-section">
@@ -374,21 +379,32 @@ export default function Home() {
       {/* ══ 9. MÜŞTƏRİLƏRDƏN GƏLƏNLƏR ══ */}
       <section className="home-section home-testimonials">
         <h2 className="home-sec-title">{lang === 'az' ? 'Müştərilərdən Gələnlər' : 'Отзывы клиентов'}</h2>
-        <div className="home-testi-row">
-          {TESTIMONIALS.map((item, i) => (
-            <div key={i} className="home-testi-card">
-              <div className="home-testi-quote">"</div>
-              <p>{item.text}</p>
-              <div className="home-testi-author">
-                <img src={item.avatar} alt={item.name} />
-                <span>{item.name}</span>
+        <div className="home-testi-slider">
+          <div
+            className="home-testi-track"
+            style={{ transform: `translateX(-${testiIdx * 100}%)` }}
+          >
+            {TESTIMONIALS.map((item, i) => (
+              <div key={i} className="home-testi-slide">
+                <div className="home-testi-card">
+                  <div className="home-testi-quote">"</div>
+                  <p>{item.text}</p>
+                  <div className="home-testi-author">
+                    <img src={item.avatar} alt={item.name} />
+                    <span>{item.name}</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
         <div className="home-dots" style={{ marginTop: '1.5rem' }}>
           {TESTIMONIALS.map((_, i) => (
-            <button key={i} className="home-dot" />
+            <button
+              key={i}
+              className={`home-dot ${i === testiIdx ? 'on' : ''}`}
+              onClick={() => setTestiIdx(i)}
+            />
           ))}
         </div>
       </section>

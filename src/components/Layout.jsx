@@ -1,13 +1,16 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 
 const Layout = () => {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+
   return (
     <>
       <Header />
-      <main className="main-container">
+      <main className={isHome ? 'home-page-main' : 'main-container'}>
         <Outlet />
       </main>
       <Footer />
@@ -16,3 +19,4 @@ const Layout = () => {
 };
 
 export default Layout;
+
